@@ -92,7 +92,7 @@ PING 172.17.0.3 (172.17.0.3) 56(84) bytes of data.
 ```
 
 
-4. IP collector and port is sets in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.1 and port 2055.
+4. IP collector and port are set in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.1 and port 2055.
 (it can be changed modilfying fprobe values). The collector machine (or container)  needs *nfdump* to catch netflow traffic. So we must to install and launch *nfdump* service to analyse if some netflow traffic is available :
 
 Installing:
@@ -113,4 +113,4 @@ Starting service:
 $ sudo wireshark
 
 ```
-And than visualise  the netfflow data using "cflow" filtering string, in *Docker0* interface (172.17.0.1) in my case.
+* And than visualise  the netfflow data using "cflow" filtering string, in *Docker0* interface (172.17.0.1) in my case.
