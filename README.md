@@ -1,24 +1,45 @@
-## netflowDataExport
+## Docker Netflow Containers 
+This repository  present two docker images that  could be used to capture netflow traffic of applications.
+  * netflow_data_export: uses *fprobe* to export netflow data that is sent or arrives in an interface.
+  * neflow_collector: receives netflow data and extracts it with *nfdump*.  
+ 
 
 1. Download and extract the files from git repository
-2. Enter in the main dir and build an image:
+
+2. Make shure if your docker is started, with `service docker status. If it isn't started yet type `service docker start`. 
+
+3. Enter in the /dockerNetflow dir and build a *netflow_collector* image, from Dockerfile, in this case  Dockerfile.collector:
+
+One entry to build the image can be in the form:
+
 ```
 $  docker build -t <YOUR_USERNAME>/myfirstapp .
+```
+  * In our case we put:
+```
+$  docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
 ``` 
-  * Ex.:
+4. Build the *neflow_data_export* image:
 ```
-$  docker build -t aqualtune/netflow_data_export_v1 .
-
+$  docker build -t aqualtune/netflow_data_export  -f Dockerfile.dataExport .
 ```
+5. Creates a collector container, named *containerc*, that will receives and store netflow data, open shell terminal:
+```
+$ docker run --name containerc -it aqualtune/netflow_collector bash
+```
+ * verify IP from collector 
 
-3. Creates two containers from the image, named *containera* and *containerb*.
+
+
+ 
+6. Creates two containers from the image, named *containera* and *containerb*.
  * In a fisrt terminal type :
 ```
-$ docker run --name containera -it aqualtune/netflow_data_export_v1 bash
+$ docker run --name containera -it aqualtune/netflow_data_export bash
 ```
  * In a second terminal type :
 ```
-$ docker run --name containerb -it aqualtune/netflow_data_export_v1  bash
+$ docker run --name containerb -it aqualtune/netflow_data_export  bash
 ```
 It will opens two bash shell terminals. So see the net config to identify the IP of the machine:
 
@@ -120,7 +141,8 @@ $ sudo wireshark
 Go to *netflowCollector* dir and creates an collector  image:
 
 ```
-docker build -t aqualtune/netflow_collector_v1 .
+docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
+
 ``` 
 7. Creates a collector container named *containerc* and enter in bash shell:
 

@@ -1,0 +1,12 @@
+# base image is ubuntu latest version
+FROM ubuntu:latest 
+# install nfdump and some tools: apt-utils for  apt-get,  iputils for ifconfig,  net-tools for ping
+RUN apt-get update && apt-get install -y \ 
+    apt-utils \
+    iputils-ping \
+    net-tools \
+    nfdump 
+# start service
+RUN service nfdump start
+	
+
