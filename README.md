@@ -11,14 +11,14 @@ $  docker build -t aqualtune/netflow_data_export_v1 .
 
 ```
 
-3. Creates two containers from the image, named *a* and *b*.
-   * In a fisrt terminal type :
+3. Creates two containers from the image, named *containera* and *containerb*.
+ * In a fisrt terminal type :
 ```
-$ docker run --name a -it aqualtune/netflow_data_export_v1 bash
+$ docker run --name containera -it aqualtune/netflow_data_export_v1 bash
 ```
  * In a second terminal type :
 ```
-$ docker run --name b -it aqualtune/netflow_data_export_v1  bash
+$ docker run --name containerb -it aqualtune/netflow_data_export_v1  bash
 ```
 It will opens two bash shell terminals. So see the net config to identify the IP of the machine:
 
@@ -68,6 +68,8 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 ```
 And than, once the IPs where identified, in order to generates netflow traffic, *ping*  *containera* in  *containerb* and vice-versa:
 
+In one terminal:
+
 ```
 root@7e89ebf3504b:/# ping 172.17.0.2
 PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
@@ -91,7 +93,7 @@ PING 172.17.0.3 (172.17.0.3) 56(84) bytes of data.
 
 
 4. IP collector and port is sets in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.1 and port 2055.
-(it can be changed modilfying fprobe values). The collector machine (or container)  needs *nfdump* to catch netflow traffic. So we must to install and launch *nfdump* service in to analyse if some netflow traffic is available :
+(it can be changed modilfying fprobe values). The collector machine (or container)  needs *nfdump* to catch netflow traffic. So we must to install and launch *nfdump* service to analyse if some netflow traffic is available :
 
 Installing:
 ```
@@ -107,11 +109,8 @@ Starting service:
  
 5. To see netflow traffic with * wireshark*,  open it  in a terminal in collector machine:
 
-
-Installing:
-
 ```
 $ sudo wireshark
 
 ```
-And filtering with "cflow" *Docker0* interface (172.17.0.1) in my case.
+And than visualise  the netfflow data using "cflow" filtering string, in *Docker0* interface (172.17.0.1) in my case.
