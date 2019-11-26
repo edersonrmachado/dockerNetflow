@@ -114,3 +114,34 @@ $ sudo wireshark
 
 ```
 * And than visualise  the netfflow data using "cflow" filtering string, in *Docker0* interface (172.17.0.1) in my case.
+
+6. Creating a third container, *containerc*, to collect netflow data from netflow data export containers, * containera* and *containerb*.
+
+Go to *netflowCollector* dir and creates an collector  image:
+
+```
+docker build -t aqualtune/netflow_collector_v1 .
+``` 
+7. Creates a collector container named *containerc* and enter in bash shell:
+
+```
+$ docker run --name containerc -it aqualtune/netflow_collector  bash
+```
+
+8. Test collector container ping other containers, sets *fprobe* file to new ip address and port of collector.
+To remove containers type:
+```
+$ docker rm containera containerb 
+```
+or,
+
+```
+$ docker rm containera containerb -f
+`` 
+
+
+This project is in test phase...
+
+
+
+
