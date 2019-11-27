@@ -42,20 +42,15 @@ So collector IP is 172.17.0.2
  * verify if *nfdump* is running
 ```
 docker exec containerc ps -ax | grep nfcapd
-```
-  Give the result:
-
-```
- 
 ```   
-So the containera has IP 172.17.0.2 and it is listen for netflow traffic in port2055.  
+So the *containera* has IP 172.17.0.2 and it is listen for netflow traffic in port2055.  
  
 6. Creates two containers from the image, named *containera* and *containerb*.
- * In a fisrt terminal type :
+ * First container
 ```
 $ docker run -d --name containera  aqualtune/netflow_data_export 
 ```
- * In a second terminal type :
+ * Second :
 ```
 $ docker run -d --name containerb  aqualtune/netflow_data_export 
 ```
@@ -63,7 +58,7 @@ See the process to know if fprobe is running :
 ```
 $ docker exec containera ps
 ```
-Result:
+
 ```
 
 ```
@@ -84,73 +79,17 @@ With produces:
 and:
 ```
 $ docker exec containterb ifconfig
-
-```
-
-
-
-
-eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
-        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
 ``` 
-and:
+# fiz ate aqui falta ajustar a imagem do netflow_data_export que tah com
+# problema na sintaxe do entrypoint
+# o comando que temos que passar eh *fprobe -ieth0 172.17.0.2:2055* 
+# nao rolou como no nfdump  
 
-```
-eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 172.17.0.3  netmask 255.255.0.0  broadcast 172.17.255.255
-        ether 02:42:ac:11:00:03  txqueuelen 0  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-```
+#desconsiderar o que esta abaixo
 And than, once the IPs where identified, in order to generates netflow traffic, *ping*  *containera* in  *containerb* and vice-versa:
 
-In one terminal:
-
-```
-root@7e89ebf3504b:/# ping 172.17.0.2
-PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
-64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.202 ms
-64 bytes from 172.17.0.2: icmp_seq=2 ttl=64 time=0.106 ms
-64 bytes from 172.17.0.2: icmp_seq=3 ttl=64 time=0.088 ms
-64 bytes from 172.17.0.2: icmp_seq=4 ttl=64 time=0.094 ms
-64 bytes from 172.17.0.2: icmp_seq=5 ttl=64 time=0.140 ms
-```
-
-Other terminal:
-```
-root@fc90d64d95a0:/# ping 172.17.0.3
-PING 172.17.0.3 (172.17.0.3) 56(84) bytes of data.
-64 bytes from 172.17.0.3: icmp_seq=1 ttl=64 time=0.121 ms
-64 bytes from 172.17.0.3: icmp_seq=2 ttl=64 time=0.099 ms
-64 bytes from 172.17.0.3: icmp_seq=3 ttl=64 time=0.093 ms
-64 bytes from 172.17.0.3: icmp_seq=4 ttl=64 time=0.099 ms
-64 bytes from 172.17.0.3: icmp_seq=5 ttl=64 time=0.088 ms
-```
-
+In one terminal
 
 4. IP collector and port are set in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.1 and port 2055.
 (it can be changed modilfying fprobe values). The collector machine (or container)  needs *nfdump* to catch netflow traffic. So we must to install and launch *nfdump* service to analyse if some netflow traffic is available :
