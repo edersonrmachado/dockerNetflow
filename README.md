@@ -80,13 +80,13 @@ and:
 ```
 $ docker exec containterb ifconfig
 ``` 
-#fiz ate aqui falta ajustar a imagem do netflow_data_export que tah com
-#problema na sintaxe do entrypoint
-#o comando que temos que passar eh *fprobe -ieth0 172.17.0.2:2055* 
-#nao rolou como no nfdump  
+## fiz ate aqui falta ajustar a imagem do netflow_data_export que tah com
+## problema na sintaxe do entrypoint
+## o comando que temos que passar eh *fprobe -ieth0 172.17.0.2:2055* 
+## nao rolou como no nfdump  
 
 
-#desconsiderar o que esta abaixo
+## desconsiderar o que esta abaixo
 
 
 And than, once the IPs where identified, in order to generates netflow traffic, *ping*  *containera* in  *containerb* and vice-versa:
