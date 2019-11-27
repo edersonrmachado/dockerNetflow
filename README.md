@@ -23,54 +23,72 @@ $  docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
 ```
 $  docker build -t aqualtune/netflow_data_export  -f Dockerfile.dataExport .
 ```
-5. Creates a collector container, named *containerc*, that will receives and store netflow data, open shell terminal:
+5. Creates a collector container, named *containerc*, that will receives and store netflow data. The port using to receive netflow data, (collector port 2055), is connected to  the host 2055 port.
 
 ```
-$ docker run --name containerc -it aqualtune/netflow_collector bash
+$ docker run -d -p 2055:2055  name containerc aqualtune/netflow_collector
 ```
-
- * In collector bash shell verify IP collector 
+ * verify IP collector 
 ```
-root@44e68ae30de0:/# ifconfig
+$ docker exec containerc ifconfg
 ```
 With returns
 ```
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
-        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
         ...
 ```
 So collector IP is 172.17.0.2
  * verify if *nfdump* is running
 ```
-root@44e68ae30de0:/# ps -ax | grep nfcapd
+docker exec containerc ps -ax | grep nfcapd
 ```
   Give the result:
 
 ```
-   26 pts/0    S+     0:00 grep --color=auto nfcapd
-
+ 
 ```   
-
+So the containera has IP 172.17.0.2 and it is listen for netflow traffic in port2055.  
  
 6. Creates two containers from the image, named *containera* and *containerb*.
  * In a fisrt terminal type :
 ```
-$ docker run --name containera -it aqualtune/netflow_data_export bash
+$ docker run -d --name containera  aqualtune/netflow_data_export 
 ```
  * In a second terminal type :
 ```
-$ docker run --name containerb -it aqualtune/netflow_data_export  bash
+$ docker run -d --name containerb  aqualtune/netflow_data_export 
 ```
-It will opens two bash shell terminals. So see the net config to identify the IP of the machine:
+See the process to know if fprobe is running :
+```
+$ docker exec containera ps
+```
+Result:
+```
 
 ```
-root@fc90d64d95a0:/# ifconfig
+```
+$ docker exec containerb ps
+```
+
+
+See the net config to identify the IP of the machine:
 
 ```
-With produces something like that:
+$ docker exec containtera ifconfig
 
 ```
+With produces:
+
+```
+and:
+```
+$ docker exec containterb ifconfig
+
+```
+
+
+
 
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
