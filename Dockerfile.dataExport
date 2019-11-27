@@ -9,15 +9,14 @@ RUN apt-get update && apt-get install -y \
     vim \
     fprobe 
 # para o servico do fprobe
-#:RUN service fprobe stop
+RUN service fprobe stop
 # apaga arquivo de config. do coletor
 RUN rm -f /etc/default/fprobe
 # substitui arquivo de config. do coletor pelo predefinido fprobe ~/netflow/fprobe
 COPY fprobe /etc/default/
 # inicial fprobe
-#RUN fprobe -ieth0 172.17.0.1:2055
-RUN service fprobe stop \
-    service fprobe start \
+RUN service fprobe start \
     service fprobe --full-restart 
-	
+#inicia fprobe
+RUN fprobe -ieth0 172.17.0.2:2055
 

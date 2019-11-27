@@ -8,5 +8,14 @@ RUN apt-get update && apt-get install -y \
     nfdump 
 # start service
 RUN service nfdump start
-	
+# after start nfdump sets the directories to store netflow data capture by nfcapd 
+RUN nfcapd -D /usr/bin/nfcapd -l /var/cache/nfdump -P /var/run/nfcapd.pid  -p 2055 -t 60
+#RUN ps -ax | grep nfcap
+# expose port
+EXPOSE 2055
 
+CMD nfcapd -D /usr/bin/nfcapd -l /var/cache/nfdump -P /var/run/nfcapd.pid  -p 2055 -t 60
+
+
+
+	
