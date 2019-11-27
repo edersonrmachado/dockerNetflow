@@ -1,14 +1,14 @@
 ## Docker Netflow Containers 
 This repository  present two docker images that  could be used to capture netflow traffic of applications.
-  * *** netflow_data_export ***: uses *fprobe* to export netflow data that is sent or arrives in an interface.
-  * *** neflow_collector *** : receives netflow data and extracts it with *nfdump*.  
+  * ***netflow_data_export***: uses *fprobe* to export netflow data that is sent or arrives in an interface.
+  * ***neflow_collector*** : receives netflow data and extracts it with *nfdump*.  
  
 
 1. Download and extract the files from git repository
 
-2. Make shure if your docker is started, with `service docker status. If it isn't started yet type `service docker start`. 
+2. Make shure if your docker is started, with `service docker status`. If it isn't started yet type `service docker start`. 
 
-3. Enter in the /dockerNetflow dir and build a *** netflow_collector *** image, from Dockerfile, in this case  *Dockerfile.collector*:
+3. Enter in the /dockerNetflow dir and build a ***netflow_collector*** image, from Dockerfile, in this case  *Dockerfile.collector*:
 
 One entry to build the image can be in the form:
 
@@ -19,7 +19,7 @@ $  docker build -t <YOUR_USERNAME>/myfirstapp .
 ```
 $  docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
 ``` 
-4. Build the *** neflow_data_export *** image:
+4. Build the ***neflow_data_export*** image:
 ```
 $  docker build -t aqualtune/netflow_data_export  -f Dockerfile.dataExport .
 ```
