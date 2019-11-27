@@ -15,7 +15,7 @@ One entry to build the image can be in the form:
 ```
 $  docker build -t <YOUR_USERNAME>/myfirstapp .
 ```
-  * In our case we put:
+   In our case we put:
 ```
 $  docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
 ``` 
@@ -29,8 +29,25 @@ $ docker run --name containerc -it aqualtune/netflow_collector bash
 ```
  * verify IP from collector 
 ```
+root@44e68ae30de0:/# ifconfig
+```
+With returns
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        ...
+```
+So collector IP is 172.17.0.2
+ * verify if *nfdump* is running
+```
+root@44e68ae30de0:/# ps -ax | grep nfcapd
+```
+  give the result:
 
 ```
+   26 pts/0    S+     0:00 grep --color=auto nfcapd
+
+```   
 
  
 6. Creates two containers from the image, named *containera* and *containerb*.
