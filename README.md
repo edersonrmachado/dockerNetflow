@@ -24,14 +24,17 @@ $  docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
 $  docker build -t aqualtune/netflow_data_export  -f Dockerfile.dataExport .
 ```
 5. Creates a collector container, named *containerc*, that will receives and store netflow data, open shell terminal:
+
 ```
 $ docker run --name containerc -it aqualtune/netflow_collector bash
 ```
- * verify IP from collector 
+
+ * In collector bash shell verify IP collector 
 ```
 root@44e68ae30de0:/# ifconfig
 ```
 With returns
+```
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
         ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
@@ -42,7 +45,7 @@ So collector IP is 172.17.0.2
 ```
 root@44e68ae30de0:/# ps -ax | grep nfcapd
 ```
-  give the result:
+  Give the result:
 
 ```
    26 pts/0    S+     0:00 grep --color=auto nfcapd
