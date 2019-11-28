@@ -71,31 +71,24 @@ $ docker exec containterb ifconfig
 ```
 7. Generates traffic
 
-Ping containera  from containerb:
+Ping (in detach mode) containera  from containerb:
 
-$ docker exec containerb ping 172.17.0.3
 ```
-Ping containerb from containera:
-
-$ docker exec containerb ping 172.17.0.4
-
-## fiz ate aqui falta ajustar a imagem do netflow_data_export que tah com
-## problema na sintaxe do entrypoint
-## o comando que temos que passar eh  *fprobe -ieth0 172.17.0.2:2055* 
-## nao rolou como no nfdump  
-## teste escrita README
-
-## desconsiderar o que esta abaixo
-
+$ docker exec -d containerb ping 172.17.0.3
+```
+Ping (in detach mode) containerb from containera:
+```
+$ docker exec -d containera ping 172.17.0.4
+```
 
 And than, once the IPs where identified, in order to generates netflow traffic, *ping*  *containera* in  *containerb* and vice-versa:
 
 In one terminal
 
-4. IP collector and port are set in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.2  and port 2055.
+ IP collector and port are set in *fprobe* file. This file replaces original fprobe installation file, and sets the IP collector to 172.17.0.2  and port 2055.
 (it can be changed modilfying fprobe values). The collector machine (or container)  needs *nfdump* to catch netflow traffic. This traffic will be reflected to
  host 2055  port and than we can see the data with wireshark.
-5. To see netflow traffic with * wireshark*,  open it  in a terminal in collector machine:
+8. To see netflow traffic with * wireshark*,  open it  in a terminal in collector machine:
 
 ```
 $ sudo wireshark
@@ -103,8 +96,6 @@ $ sudo wireshark
 ```
 * And than visualise  the netfflow data using "cflow" filtering string, in *Docker0* interface (172.17.0.1) in my case.
 ```
-
-8. Test collector container ping other containers, sets *fprobe* file to new ip address and port of collector.
 To remove containers type:
 ```
 $ docker rm containera containerb 
@@ -119,4 +110,16 @@ $ docker rm containera containerb -f
 This project is in test phase...
 
 
+## COMMANDS SUMMARY
+
+```
+$ docker build -t aqualtune/netflow_collector -f Dockerfile.collector .
+$ docker build -t aqualtune/netflow_data_export -f Dockerfile.dataExport .
+$ docker run -d -p 2055:2055 --name containerc aqualtune/netflow_collector
+$ docker run -it -d --name containera aqualtune/netflow_data_export /bin/bash
+$ docker run -it -d --name containerb aqualtune/netflow_data_export /bin/bash
+$ docker exec -d containerb ping 172.17.0.3
+$ docker exec -d containera ping 172.17.0.4
+```
+See traffic in wireshark (Docker0 interface)
 
