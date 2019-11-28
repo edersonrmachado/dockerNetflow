@@ -8,8 +8,6 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     vim \
     fprobe 
-# para o servico do fprobe
-#RUN service fprobe stop
 # apaga arquivo de config. do coletor
 RUN rm -f /etc/default/fprobe
 # substitui arquivo de config. do coletor pelo predefinido fprobe ~/netflow/fprobe
@@ -17,5 +15,5 @@ COPY fprobe /etc/default/
 #ENTRYPOINT ["/usr/sbin/fprobe","-i","eth0","remote","172.17.0.2","port","2055"]
 #CMD ["/usr/sbin/fprobe","-i","eth0","remote:port","172.17.0.2:2055"]
 
-ENTRYPOINT fprobe -ieth0 172.17.0.2:2055
+ENTRYPOINT service fprobe start && /bin/bash
 
