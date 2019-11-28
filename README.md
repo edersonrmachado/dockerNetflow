@@ -123,3 +123,14 @@ $ docker exec -d containera ping 172.17.0.4
 ```
 See traffic in wireshark (Docker0 interface)
 
+## Installing containers with script:
+
+1. Access permission
+
+``` 
+$ chmod +x startingContainers.sh
+```
+2. Install
+```
+$ ./startingContainers.sh
+``` 
