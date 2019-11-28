@@ -26,7 +26,7 @@ $  docker build -t aqualtune/netflow_data_export  -f Dockerfile.dataExport .
 5. Creates a collector container, named *containerc*, that will receives and store netflow data. The port using to receive netflow data, (collector port 2055), is connected to  the host 2055 port.
 
 ```
-$ docker run -d -p 2055:2055  name containerc aqualtune/netflow_collector
+$ docker run -d -p 2055:2055  --name containerc aqualtune/netflow_collector
 ```
  * verify IP collector 
 ```
