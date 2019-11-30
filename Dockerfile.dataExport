@@ -1,19 +1,25 @@
+#ARG variavel
 # especifica a imagem do ubuntu de base 
 FROM ubuntu:latest 
+#declara uma variavel que vai vir do prompt
+ARG collectorIpArg="default Value"
 # instala ferramentas
 # apt-utils (para o apt-get)  para iputils (para o ping) net-tolls (para ping)
+
+ENV COLLECTOR_IP=${collectorIpArg}
+
 RUN apt-get update && apt-get install -y \ 
     apt-utils \
     iputils-ping \
     net-tools \
-    vim \
     fprobe 
 # apaga arquivo de config. do coletor
 RUN rm -f /etc/default/fprobe
 # substitui arquivo de config. do coletor pelo predefinido fprobe ~/netflow/fprobe
 COPY fprobe /etc/default/
-#ENTRYPOINT ["/usr/sbin/fprobe","-i","eth0","remote","172.17.0.2","port","2055"]
-#CMD ["/usr/sbin/fprobe","-i","eth0","remote:port","172.17.0.2:2055"]
-
-ENTRYPOINT service fprobe start && /bin/bash
-
+#entrypoint
+ENTRYPOINT service fprobe start && /bin/bash 
+#RUN nsenter -t ${variavel} -n service fprobe start &&  tail -F /var/log/fprobe/*.log
+#CMD fprobe -ieth0 172.17.0.2:2055  
+#172.17.0.2:2055
+                                                                                        
