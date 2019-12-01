@@ -1,47 +1,40 @@
-## COMMANDS SUMMARY
-# Comandos
-
-#### Build and Run application
+### 
+#### 1. Build and Run application
 ``` 
 docker-compose up  -d
 ``` 
-#### Generates collector image
+#### 2. Generates collector image
 ```
-docker build -t netflow_collector -f Dockerfile.collector .
+ docker build -t netflow_collector -f Dockerfile.collector .
 ```
-#### Run collector image 
+#### 3. Run collector image 
 ```
 docker run -d -p 2055:2055 --name containerc netflow_collector
 ```
 
-#### Collect collector IP 
+#### 4. Collect collector IP 
 ```
 collectorIp=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerc)
 ```
-#### Generates Data Export containers
+##### Generates Data Export containers
 
-#### Build probes Image
+#### 5. Build probes Image
 ```
 docker build  --build-arg collectorIpArg=collectorIp  -t netflow_data_export -f Dockerfile.dataExport . 
 ```
-
-#### Take PID of application container
-```
-PID1=$(docker inspect --format '{{.State.Pid}}' dockernetflow_wordpress_1)
-```
-```
-PID2=$(docker inspect --format '{{.State.Pid}}' dockernetflow_db_1)
-```
-####Generates probe1 taking PID of wordpress
-##### Wordpress probe
+##### Generates probes taking PID of application
+#### 6. Netflow Data Export 1: Wordpress probe
 ```
 docker run --rm -it -d --privileged --pid="container:dockernetflow_wordpress_1"   --name containera  netflow_data_export  \bin\bash
 ``` 
-##### MySql (db) probe
+#### 7. Netflow Data Export 1: MySql (db) probe
 ```
 docker run --rm -it -d --privileged --pid="container:dockernetflow_db_1"   --name containerb  netflow_data_export  \bin\bash
 ``` 
-
+#### 8. Trasnfering Netflow data to an output folder
+``` 
+while true; do docker cp containerc:/var/cache/nfdump ~/Docker/dockerNetflow/nes; sleep 300; done &
+``` 
 ### ALL COMMANDS
 ```
 docker-compose up  -d
@@ -52,9 +45,12 @@ docker build  --build-arg collectorIpArg=collectorIp  -t netflow_data_export -f 
 docker run --rm -it -d --privileged --pid="container:dockernetflow_wordpress_1"   --name containera  netflow_data_export  \bin\bash
 docker run --rm -it -d --privileged --pid="container:dockernetflow_db_1"   --name containerb  netflow_data_export  \bin\bash
 ```
+#### Netflow  traffic output folder
+``` 
+while true; do docker cp containerc:/var/cache/nfdump ~/Docker/dockerNetflow/nes; sleep 300; done &
+``` 
 
 #### DELETING containers and Images
-
 
 ##### Kill containers
 ```
@@ -66,7 +62,7 @@ docker rm dockernetflow_wordpress_1  dockernetflow_db_1 containera containerb co
 ```
 ##### Remove images
 ```
-docker image rm netflow_collector netflow_dataExport
+docker image rm netflow_collector netflow_data_export
 ```
 
 #### DELETING ALL 
@@ -74,7 +70,7 @@ docker image rm netflow_collector netflow_dataExport
 ```
 docker kill dockernetflow_wordpress_1  dockernetflow_db_1 containera containerb containerc
 docker rm dockernetflow_wordpress_1  dockernetflow_db_1 containera containerb containerc -f
-docker image rm netflow_collector netflow_dataExport
+docker image rm netflow_collector netflow_data_export
 ```
 
 
@@ -119,7 +115,37 @@ RUN apt-get update && apt-get install -y \
 EXPOSE 2055
 #
 ENTRYPOINT ["/usr/bin/nfcapd","-l","/var/cache/nfdump","-p","2055"]
+```
+#### Namespaces and PIDs
+```
+PID1=$(docker inspect --format '{{.State.Pid}}' dockernetflow_wordpress_1)
+PID2=$(docker inspect --format '{{.State.Pid}}' dockernetflow_db_1)
+PID3=$(docker inspect --format '{{.State.Pid}}' containera)
+PID4=$(docker inspect --format '{{.State.Pid}}' containerb)
+PID5=$(docker inspect --format '{{.State.Pid}}' containerc)
+:
+```
+##### All namespaces
+```
+sudo ls /proc/$PID1/ns -la
+sudo ls /proc/$PID2/ns -la
+sudo ls /proc/$PID3/ns -la
+sudo ls /proc/$PID4/ns -la
+sudo ls /proc/$PID5/ns -la
+```
 
-
+##### All interfaces
+```
+sudo nsenter -t $PID1 -n ip a
+sudo nsenter -t $PID2 -n ip a
+sudo nsenter -t $PID3 -n ip a
+sudo nsenter -t $PID4 -n ip a
+sudo nsenter -t $PID5 -n ip a
 ```
 ```
+nohup bash -c 'while true; do docker cp containerc:/var/cache/nfdump ~/Docker/dockerNetflow/nes; sleep 20; done' < /dev/null &
+```
+ 
+```
+$ docker ps -q | xargs docker inspect --format '{{.State.Pid}}, {{.ID}}' | grep "^${PID},"
+``` 
