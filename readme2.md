@@ -42,9 +42,22 @@ docker build -t netflow_collector -f Dockerfile.collector .
 docker run -d -p 2055:2055 --name containerc netflow_collector
 collectorIp=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerc)
 docker build  --build-arg collectorIpArg=collectorIp  -t netflow_data_export -f Dockerfile.dataExport . 
-docker run --rm -it -d --privileged --pid="container:dockernetflow_wordpress_1"   --name containera  netflow_data_export  \bin\bash
-docker run --rm -it -d --privileged --pid="container:dockernetflow_db_1"   --name containerb  netflow_data_export  \bin\bash
+docker run  -it -d --privileged --pid="container:dockernetflow_wordpress_1" --network=container:dockernetflow_wordpress_1  --name containera  netflow_data_export  \bin\bash
+docker run -it -d --privileged --pid="container:dockernetflow_db_1" --network=container:dockernetflow_db_1  --name containerb  netflow_data_export  \bin\bash
 ```
+
+##sem o compartilhamento de rede
+```
+docker-compose up  -d
+docker build -t netflow_collector -f Dockerfile.collector .
+docker run -d -p 2055:2055 --name containerc netflow_collector
+collectorIp=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerc)
+docker build  --build-arg collectorIpArg=collectorIp  -t netflow_data_export -f Dockerfile.dataExport . 
+docker run  -it -d --privileged --pid="container:dockernetflow_wordpress_1"  --name containera  netflow_data_export  \bin\bash
+docker run -it -d --privileged --pid="container:dockernetflow_db_1" --name containerb  netflow_data_export  \bin\bash
+```
+
+
 #### Netflow  traffic output folder
 ``` 
 while true; do docker cp containerc:/var/cache/nfdump ~/Docker/dockerNetflow/nes; sleep 300; done &
@@ -142,10 +155,36 @@ sudo nsenter -t $PID3 -n ip a
 sudo nsenter -t $PID4 -n ip a
 sudo nsenter -t $PID5 -n ip a
 ```
+#### salvar com o nhup
 ```
 nohup bash -c 'while true; do docker cp containerc:/var/cache/nfdump ~/Docker/dockerNetflow/nes; sleep 20; done' < /dev/null &
 ```
- 
+#### passar dado para um arquivo
+
 ```
-$ docker ps -q | xargs docker inspect --format '{{.State.Pid}}, {{.ID}}' | grep "^${PID},"
-``` 
+ docker inspect -f '{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' containera > file.txt
+```
+#### acessar a pasta do nfdump do coletor
+```
+docker exec --privileged containerc nfdump -o line -R /var/cache/nfdump
+```
+
+#### First, you’d create the veth pair:
+```
+ip link add veth0 type veth peer name veth1
+```
+
+
+
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
