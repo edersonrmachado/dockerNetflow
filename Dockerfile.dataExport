@@ -1,35 +1,22 @@
-#ARG variavel
-# especifica a imagem do ubuntu de base 
+# load ubuntu image 
 FROM ubuntu:latest 
-#declara uma variavel que vai vir do prompt
-#ARG process="default Value"
-# instala ferramentas
-# apt-utils (para o apt-get)  para iputils (para o ping) net-tolls (para ping)
 
-#ENV PID_ENV=${process}
+#environement variables
+ENV FLOW_COLLECTOR="localhost"
+ENV COLLECTOR_PORT="2055"
+ENV INTERFACE="eth0"
 
-ENV environment="default value"
-#ENV cluster"default value"
+#install utils  
+RUN apt-get update && apt-get install -y  fprobe 
 
-
-RUN apt-get update && apt-get install -y \ 
-    apt-utils \
-    iputils-ping \
-    net-tools \
-    iproute2 \
-    fprobe 
-# apaga arquivo de config. do coletor
-RUN rm -f /etc/default/fprobe
-# substitui arquivo de config. do coletor pelo predefinido fprobe ~/netflow/fprobe
-COPY fprobe /etc/default/
-#entrypoint
-#ENTRYPOINT service fprobe start && /bin/bash 
-#CMD ["sh", "-c","nsenter -t $environment -n","service fprobe start &&  tail -F /var/log/fprobe/*.log
-CMD ["sh","-c","nsenter -t ${environment} -n service fprobe start && tail -F /var/log/fprobe/*.log" ]
-#  &&  tail -F /var/log/fprobe/*.log"]
-#CMD ["sh", "-c","nsenter -t ${environment} -n"]
-# && tail -F /var/log/f/var/log/fprobe/*.log"]
-
-#CMD fprobe -ieth0 172.17.0.2:2055 && /bin/bash 
-#172.17.0.2:2055
-                                                                                        
+#RUN apt-get update && apt-get install -y \
+#    apt-utils \
+#    iputils-ping \
+#    net-tools \
+#    iproute2 \
+#    fprobe
+# removes fprobe configs 
+#RUN rm -f /etc/default/fprobe
+# replace fprobe config file
+#COPY fprobe /etc/default/
+ENTRYPOINT fprobe -i${INTERFACE} ${FLOW_COLLECTOR}:${COLLECTOR_PORT} && /bin/bash                                                        
