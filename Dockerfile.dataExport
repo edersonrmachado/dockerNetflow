@@ -1,22 +1,13 @@
 # load ubuntu image 
 FROM ubuntu:latest 
 
-#environement variables
+# environement variables 
 ENV FLOW_COLLECTOR="localhost"
 ENV COLLECTOR_PORT="2055"
 ENV INTERFACE="eth0"
 
-#install utils  
+# install fprobe
 RUN apt-get update && apt-get install -y  fprobe 
 
-#RUN apt-get update && apt-get install -y \
-#    apt-utils \
-#    iputils-ping \
-#    net-tools \
-#    iproute2 \
-#    fprobe
-# removes fprobe configs 
-#RUN rm -f /etc/default/fprobe
-# replace fprobe config file
-#COPY fprobe /etc/default/
+# run fprobe and bin/bash
 ENTRYPOINT fprobe -i${INTERFACE} ${FLOW_COLLECTOR}:${COLLECTOR_PORT} && /bin/bash                                                        

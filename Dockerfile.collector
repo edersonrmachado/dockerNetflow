@@ -1,22 +1,13 @@
 # base image is ubuntu latest version
 FROM ubuntu:latest 
-# install nfdump and some tools: apt-utils for  apt-get,  iputils for ifconfig,  net-tools for ping
+
+# install nfdump tool
 RUN apt-get update && apt-get install -y nfdump 
-#    apt-utils \
-#    iputils-ping \
-#    net-tools \
-#    nfdump
 
-
-#RUN apt-get update && apt-get install -y \
-#    apt-utils \
-#    iputils-ping \
-#    net-tools \
-#    nfdump
-
-# expose port
+# expose container netflow collector port
 EXPOSE 2055
-#
+ 
+# configure folder to store netflow data files  and start collector   
 ENTRYPOINT ["/usr/bin/nfcapd","-l","/var/cache/nfdump","-p","2055"]
 
 
