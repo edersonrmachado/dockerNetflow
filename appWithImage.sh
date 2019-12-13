@@ -19,7 +19,7 @@ do
  i=`expr $i + 1`
 
  # delete containers, network and images created without show them  in shell
- ./del >/dev/null
+ ./del2 >/dev/null
 done
 echo -e "------------------ Test Finished ------------------\n"
 # clear terminal shell

@@ -1,0 +1,11 @@
+docker kill dockernetflow_wordpress_1  dockernetflow_db_1 containera containerb containerc
+docker rm dockernetflow_wordpress_1  dockernetflow_db_1 containera containerb containerc -f
+#docker image rm netflow_collector netflow_data_export aqualtune/netflow_collector  aqualtune/netflow_data_export wordpress mysql:5.7 -f
+docker network rm netflow dockernetflow_default  aqualtune_default
+#sudo ip netns ls
+#sudo ip netns del containera
+#sudo ip netns del containerb
+#sudo ip netns del containerc
+#sudo ip netns del dockernetflow_wordpress_1
+#sudo ip netns del dockernetflow_db_1
+#sudo ip netns ls
